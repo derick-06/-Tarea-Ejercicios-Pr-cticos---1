@@ -1,0 +1,47 @@
+import re
+
+class Pila:
+    def __init__(self):
+        self.items = []
+
+    def push(self, item):
+        self.items.append(item)
+
+    def pop(self):
+        if not self.esta_vacia():
+            return self.items.pop()
+        return None
+
+    def peek(self):
+        if not self.esta_vacia():
+            return self.items[-1]
+        return None
+
+    def esta_vacia(self):
+        return len(self.items) == 0
+
+
+def validarHTML(codigo):
+    pila = Pila()
+
+    # Extraer etiquetas con regex (<tag> o </tag>)
+    etiquetas = re.findall(r"</?([a-zA-Z0-9]+)>", codigo)
+    cierres = re.findall(r"(</[a-zA-Z0-9]+>)", codigo)
+
+    # reconstruir lista con apertura/cierre
+    tokens = []
+    i_cierre = 0
+    for match in re.finditer(r"(</?[a-zA-Z0-9]+>)", codigo):
+        tokens.append(match.group())
+
+    # Revisar etiquetas
+    for token in tokens:
+        if token.startswith("</"):  # etiqueta de cierre
+            if pila.esta_vacia():
+                return False
+            if pila.pop() != token[2:-1]:  # quitar </ >
+                return False
+        else:  # etiqueta de apertura
+            pila.push(token[1:-1])  # quitar < >
+
+    return pila.esta_vacia()
