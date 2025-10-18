@@ -1,0 +1,61 @@
+class Pila:
+    def __init__(self, nombre):
+        self.items = []
+        self.nombre = nombre  # Para identificar la torre
+
+    def push(self, item):
+        self.items.append(item)
+
+    def pop(self):
+        if not self.esta_vacia():
+            return self.items.pop()
+        return None
+
+    def peek(self):
+        if not self.esta_vacia():
+            return self.items[-1]
+        return None
+
+    def esta_vacia(self):
+        return len(self.items) == 0
+
+    def __str__(self):
+        return f"{self.nombre}: {self.items}"
+
+
+def mover(origen, destino):
+    disco = origen.pop()
+    destino.push(disco)
+    print(f"Mover disco {disco} de {origen.nombre} a {destino.nombre}")
+
+
+def hanoi(n, origen, destino, auxiliar):
+    if n == 1:
+        mover(origen, destino)
+        return
+    # Mover n-1 discos a la torre auxiliar
+    hanoi(n-1, origen, auxiliar, destino)
+    # Mover el disco mayor a la torre destino
+    mover(origen, destino)
+    # Mover los n-1 discos de auxiliar a destino
+    hanoi(n-1, auxiliar, destino, origen)
+
+
+# Ejemplo de uso:
+n = 3  # número de discos
+origen = Pila("Origen")
+destino = Pila("Destino")
+auxiliar = Pila("Auxiliar")
+
+# Inicializar torre origen con discos (del mayor abajo al menor arriba)
+for disco in range(n, 0, -1):
+    origen.push(disco)
+
+print("Estado inicial:")
+print(origen, destino, auxiliar, "\n")
+
+# Resolver Torre de Hanoi
+hanoi(n, origen, destino, auxiliar)
+
+print("\nEstado final:")
+print(origen, destino, auxiliar)
