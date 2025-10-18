@@ -1,0 +1,55 @@
+def infija_a_postfija(expresion):
+    # Diccionario de precedencia
+    precedencia = {'+': 1, '-': 1, '*': 2, '/': 2}
+
+    # Función para separar tokens (números, operadores y paréntesis)
+    def tokenizar(expr):
+        tokens = []
+        numero = ""
+        for char in expr:
+            if char.isdigit():
+                numero += char
+            else:
+                if numero != "":
+                    tokens.append(numero)
+                    numero = ""
+                if char.strip():  # ignorar espacios vacíos
+                    tokens.append(char)
+        if numero != "":
+            tokens.append(numero)
+        return tokens
+
+    salida = []  # lista de salida (resultado en notación postfija)
+    pila = []    # pila de operadores
+
+    tokens = tokenizar(expresion)
+
+    for token in tokens:
+        if token.isdigit():  # Si es número
+            salida.append(token)
+
+        elif token == '(':
+            pila.append(token)
+
+        elif token == ')':
+            while pila and pila[-1] != '(':
+                salida.append(pila.pop())
+            pila.pop()  # eliminar '('
+
+        else:  # es operador
+            while (pila and pila[-1] != '(' and
+                   precedencia[pila[-1]] >= precedencia[token]):
+                salida.append(pila.pop())
+            pila.append(token)
+
+    # Vaciar lo que queda en la pila
+    while pila:
+        salida.append(pila.pop())
+
+    return " ".join(salida)
+
+
+# Ejemplo de uso:
+expresion = "3 + 4 * 2"
+print("Infija:  ", expresion)
+print("Postfija:", infija_a_postfija(expresion))
